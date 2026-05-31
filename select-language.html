@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SpeakRise — Choose Your Language</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:#F8F9FF;
+  color:#1A1A2E;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── BACKGROUND ── */
+.bg-wrap{
+  min-height:100vh;
+  position:relative;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  padding:40px 20px 60px;
+  background:linear-gradient(160deg,#EEF0FF 0%,#F8F9FF 50%,#FFF7ED 100%);
+  overflow:hidden;
+}
+.bg-blob1{position:absolute;top:-100px;right:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(79,70,229,0.12) 0%,transparent 70%);pointer-events:none}
+.bg-blob2{position:absolute;bottom:-80px;left:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,0.10) 0%,transparent 70%);pointer-events:none}
+.bg-blob3{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.04) 0%,transparent 70%);pointer-events:none}
+
+/* ── HEADER ── */
+.header{
+  display:flex;flex-direction:column;align-items:center;
+  margin-bottom:44px;position:relative;z-index:10;
+  animation:fadeDown 0.6s ease both;
+}
+.logo-row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.logo-mark{
+  width:56px;height:56px;border-radius:16px;
+  background:linear-gradient(135deg,#4F46E5,#7C3AED);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:900;color:#fff;
+  box-shadow:0 8px 28px rgba(79,70,229,0.35);
+}
+.logo-name{font-size:28px;font-weight:900;color:#1A1A2E;letter-spacing:-1px}
+.logo-name span{color:#4F46E5}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.lang-badge{
+  padding:4px 12px;border-radius:99px;
+  font-size:11px;font-weight:700;
+  background:rgba(79,70,229,0.08);color:#4F46E5;
+  border:1px solid rgba(79,70,229,0.15);
+}
+.header-title{font-size:26px;font-weight:900;color:#1A1A2E;text-align:center;letter-spacing:-0.5px;margin-bottom:8px}
+.header-sub{font-size:14px;color:#6B7280;text-align:center;max-width:380px;line-height:1.6}
+
+/* ── SEARCH ── */
+.search-wrap{
+  position:relative;width:100%;max-width:460px;
+  margin-bottom:24px;z-index:10;
+  animation:fadeUp 0.5s ease 0.1s both;
+}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9CA3AF;pointer-events:none}
+.search-input{
+  width:100%;padding:13px 16px 13px 44px;
+  border-radius:14px;
+  border:1.5px solid #E5E7EB;
+  background:#fff;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:14px;color:#1A1A2E;
+  outline:none;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.search-input:focus{border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,0.10)}
+.search-input::placeholder{color:#9CA3AF}
+
+/* ── LANGUAGE GRID ── */
+.lang-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  width:100%;max-width:860px;
+  position:relative;z-index:10;
+  animation:fadeUp 0.5s ease 0.15s both;
+}
+@media(max-width:720px){.lang-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.lang-grid{grid-template-columns:repeat(2,1fr);gap:10px}}
+
+.lang-card{
+  display:flex;flex-direction:column;align-items:center;
+  padding:18px 10px 14px;
+  border-radius:16px;
+  border:2px solid #E5E7EB;
+  background:#fff;
+  cursor:pointer;
+  transition:border-color 0.18s,box-shadow 0.18s,transform 0.15s,background 0.18s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.05);
+  position:relative;
+  user-select:none;
+}
+.lang-card:hover{
+  border-color:#4F46E5;
+  box-shadow:0 4px 18px rgba(79,70,229,0.13);
+  transform:translateY(-2px);
+}
+.lang-card.selected{
+  border-color:#4F46E5;
+  background:rgba(79,70,229,0.05);
+  box-shadow:0 4px 20px rgba(79,70,229,0.18);
+}
+.lang-card.selected .check{display:flex}
+.lang-card.hidden{display:none}
+
+.check{
+  display:none;
+  position:absolute;top:8px;right:8px;
+  width:20px;height:20px;border-radius:50%;
+  background:#4F46E5;
+  align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.check svg{width:10px;height:10px;color:#fff}
+
+.lang-flag{font-size:30px;margin-bottom:8px;line-height:1}
+.lang-native{font-size:13px;font-weight:700;color:#1A1A2E;text-align:center;margin-bottom:2px}
+.lang-english{font-size:11px;color:#9CA3AF;font-weight:500}
+
+/* ── CONTINUE BTN ── */
+.continue-wrap{
+  margin-top:28px;width:100%;max-width:320px;
+  position:relative;z-index:10;
+  animation:fadeUp 0.5s ease 0.3s both;
+}
+.btn-continue{
+  width:100%;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:15px 24px;
+  border-radius:16px;border:none;
+  background:linear-gradient(135deg,#4F46E5,#7C3AED);
+  color:#fff;font-size:16px;font-weight:800;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  cursor:pointer;
+  box-shadow:0 6px 24px rgba(79,70,229,0.40);
+  transition:opacity 0.2s,transform 0.15s,box-shadow 0.2s;
+  letter-spacing:0.01em;
+}
+.btn-continue:hover{opacity:0.92;box-shadow:0 8px 30px rgba(79,70,229,0.50)}
+.btn-continue:active{transform:scale(0.97)}
+.btn-continue:disabled{opacity:0.4;cursor:not-allowed;box-shadow:none}
+
+.continue-note{
+  text-align:center;margin-top:10px;
+  font-size:11px;color:#9CA3AF;
+}
+
+/* ── STATS ── */
+.stats-row{
+  display:flex;gap:24px;flex-wrap:wrap;justify-content:center;
+  margin-top:36px;position:relative;z-index:10;
+  animation:fadeUp 0.5s ease 0.4s both;
+}
+.stat-item{text-align:center}
+.stat-val{font-size:20px;font-weight:900;color:#1A1A2E;letter-spacing:-0.5px}
+.stat-lbl{font-size:11px;color:#9CA3AF;margin-top:2px}
+
+.no-results{
+  grid-column:1/-1;
+  display:flex;flex-direction:column;align-items:center;
+  padding:40px 20px;gap:10px;text-align:center;
+}
+.no-results-icon{font-size:40px}
+.no-results-text{font-size:14px;font-weight:600;color:#6B7280}
+
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="bg-wrap">
+  <div class="bg-blob1"></div>
+  <div class="bg-blob2"></div>
+  <div class="bg-blob3"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-row">
+      <div class="logo-mark">S</div>
+      <div class="logo-name">Speak<span>Rise</span></div>
+    </div>
+    <div class="badge-row">
+      <span class="lang-badge">20+ Languages</span>
+      <span class="lang-badge">A1 → C2</span>
+      <span class="lang-badge">Free Forever</span>
+    </div>
+    <div class="header-title">Choose Your Language</div>
+    <div class="header-sub">Select the language you speak — we'll teach you English using it</div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <input class="search-input" id="lang-search" placeholder="Search language..." oninput="filterLangs(this.value)" autocomplete="off"/>
+  </div>
+
+  <!-- Language Grid -->
+  <div class="lang-grid" id="lang-grid"></div>
+
+  <!-- Continue Button -->
+  <div class="continue-wrap">
+    <button class="btn-continue" id="btn-continue" disabled onclick="goNext()">
+      Select a language to continue
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+    <div class="continue-note" id="continue-note">Your choice is saved for next time</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-val">20+</div><div class="stat-lbl">Languages supported</div></div>
+    <div class="stat-item"><div class="stat-val">6</div><div class="stat-lbl">CEFR Levels</div></div>
+    <div class="stat-item"><div class="stat-val">15,000+</div><div class="stat-lbl">Vocabulary words</div></div>
+    <div class="stat-item"><div class="stat-val">Free</div><div class="stat-lbl">Always free</div></div>
+  </div>
+</div>
+
+<script src="languages.js"></script>
+<script>
+'use strict';
+
+let selectedLang = localStorage.getItem('speakrise_lang') || null;
+
+const LANG_LIST = Object.entries(LANGUAGES).map(([code, info]) => ({
+  code, ...info
+}));
+
+function renderGrid(list) {
+  const grid = document.getElementById('lang-grid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><div class="no-results-text">No language found. Try a different search.</div></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(l => `
+    <div class="lang-card ${selectedLang===l.code?'selected':''}" id="card-${l.code}" onclick="selectLang('${l.code}')">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="lang-flag">${l.flag}</div>
+      <div class="lang-native">${l.native}</div>
+      <div class="lang-english">${l.name}</div>
+    </div>
+  `).join('');
+}
+
+function selectLang(code) {
+  selectedLang = code;
+  // Update cards
+  document.querySelectorAll('.lang-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('card-' + code);
+  if (card) card.classList.add('selected');
+
+  // Update button
+  const t = UI_TEXT[code] || UI_TEXT.en;
+  const lang = LANGUAGES[code];
+  const btn = document.getElementById('btn-continue');
+  btn.disabled = false;
+  btn.innerHTML = `${lang.flag} ${t.continue} <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`;
+  document.getElementById('continue-note').textContent = `SpeakRise will use ${lang.native} (${lang.name})`;
+}
+
+function filterLangs(query) {
+  const q = query.toLowerCase();
+  const filtered = LANG_LIST.filter(l =>
+    l.name.toLowerCase().includes(q) || l.native.toLowerCase().includes(q) || l.code.includes(q)
+  );
+  renderGrid(filtered);
+  // Re-select if visible
+  if (selectedLang) {
+    const card = document.getElementById('card-' + selectedLang);
+    if (card) card.classList.add('selected');
+  }
+}
+
+function goNext() {
+  if (!selectedLang) return;
+  localStorage.setItem('speakrise_lang', selectedLang);
+  window.location.href = 'login.html';
+}
+
+// Auto-redirect if already chose language
+const saved = localStorage.getItem('speakrise_lang');
+const alreadyLoggedIn = localStorage.getItem('speakrise_authed');
+if (saved && alreadyLoggedIn) {
+  window.location.replace('index.html');
+}
+
+// Initial render
+renderGrid(LANG_LIST);
+if (selectedLang) selectLang(selectedLang);
+</script>
+</body>
+</html>
